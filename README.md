@@ -22,7 +22,7 @@ FairShare is a web-based application designed to simplify group expense manageme
 
 1. **Clone the Repository**
    ```sh
-   git clone https://github.com/yourusername/fairshare.git
+   git clone https://github.com/narmadha-raghu/fairshare.git
    cd fairshare
    ```
 
@@ -43,18 +43,12 @@ FairShare is a web-based application designed to simplify group expense manageme
    set FLASK_ENV=development
    ```
 
-5. **Initialize Database**
-   ```sh
-   flask db upgrade  # If using Flask-Migrate
-   python init_db.py  # If you have a script to initialize DB
-   ```
-
-6. **Run the Application**
+5. **Run the Application**
    ```sh
    flask run
    ```
 
-7. Open your browser and go to: **`http://127.0.0.1:5000`**
+6. Open your browser and go to: **`http://127.0.0.1:5000`**
 
 ## API Routes & Endpoints
 
@@ -73,14 +67,4 @@ FairShare is a web-based application designed to simplify group expense manageme
 ### Settlements
 - `POST http://127.0.0.1:5000/settle` → Settle a partial or full amount between two users
 - `POST http://127.0.0.1:5000/settle_all` → Clear all balances and settle everything
-
-### Users & Groups
-- `GET http://127.0.0.1:5000/users` → View list of all users
-- `GET http://127.0.0.1:5000/groups` → View list of all expense groups (if implemented)
-
-## Contributing
-Feel free to fork the repository and contribute with improvements. Submit a pull request with a clear description of your changes.
-
-## License
-This project is licensed under the MIT License.
 

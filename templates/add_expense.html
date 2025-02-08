@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-center">Add Expense</h2>
+
+<div class="card shadow p-4">
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Amount</label>
+            <input type="number" step="0.01" name="amount" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input type="text" name="description" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Payer:</label>
+            <select name="payer_id" class="form-select" required>
+                {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Split Type</label>
+            <select name="split_type" id="split_type" class="form-select">
+                <option value="equal">Equal</option>
+                <option value="custom">Custom</option>
+            </select>
+        </div>
+
+        <!-- Custom Split Section -->
+        <div id="custom_split_section" style="display: none;">
+            <h5>Enter Custom Split</h5>
+            {% for user in users %}
+                <div class="mb-2">
+                    <label>{{ user.username }}:</label>
+                    <input type="number" step="0.01" name="custom_split[{{ user.id }}]" class="form-control">
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="btn btn-success">Add Expense</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById("split_type").addEventListener("change", function() {
+        let customSection = document.getElementById("custom_split_section");
+        if (this.value === "custom") {
+            customSection.style.display = "block";
+        } else {
+            customSection.style.display = "none";
+        }
+    });
+</script>
+{% endblock %}
