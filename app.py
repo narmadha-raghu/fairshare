@@ -118,8 +118,8 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('Logged out successfully.', 'info')
-    return redirect(url_for('login'))
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('home'))
 
 
 @app.route('/add_expense', methods=['GET', 'POST'])
