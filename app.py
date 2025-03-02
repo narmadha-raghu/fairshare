@@ -57,6 +57,7 @@ class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(255), nullable=False)
+    date = db.Column(db.Date, nullable=True)
     payer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)

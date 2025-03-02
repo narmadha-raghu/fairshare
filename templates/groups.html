@@ -26,6 +26,7 @@
         margin-bottom: 15px;
         border: 1px solid rgba(255, 255, 255, 0.3);
         transition: transform 0.2s;
+        cursor: pointer;
     }
     .group-card:hover {
         transform: translateY(-3px);
@@ -51,6 +52,10 @@
         margin-bottom: 15px;
         color: rgba(0, 0, 0, 0.3);
     }
+    .no-underline {
+        text-decoration: none;
+        color: inherit;
+    }
 </style>
 
 <div class="container py-4">
@@ -66,20 +71,23 @@
             <div class="row">
                 {% for group in groups %}
                     <div class="col-md-6 mb-3">
-                        <div class="group-card">
-                            <h4><a href="{{ url_for('group_details', group_id=group.id) }}" class="text-decoration-none">{{ group.name }}</a></h4>
-                            <p class="text-muted">{{ group.description }}</p>
-                            
-                            {% if group.created_by == current_user.id %}
-                                <span class="badge bg-success">Creator</span>
-                            {% else %}
-                                <span class="badge bg-primary">Member</span>
-                            {% endif %}
-                            
-                            <p class="text-muted mt-2 mb-0">
-                                <small>Created on {{ group.created_at.strftime('%B %d, %Y') }}</small>
-                            </p>
-                        </div>
+                        <!-- Make the entire card clickable with an onclick event -->
+                        <a href="{{ url_for('group_details', group_id=group.id) }}" class="no-underline">
+                            <div class="group-card">
+                                <h4>{{ group.name }}</h4>
+                                <p class="text-muted">{{ group.description }}</p>
+
+                                {% if group.created_by == current_user.id %}
+                                    <span class="badge bg-success">Creator</span>
+                                {% else %}
+                                    <span class="badge bg-primary">Member</span>
+                                {% endif %}
+
+                                <p class="text-muted mt-2 mb-0">
+                                    <small>Created on {{ group.created_at.strftime('%B %d, %Y') }}</small>
+                                </p>
+                            </div>
+                        </a>
                     </div>
                 {% endfor %}
             </div>
@@ -95,4 +103,17 @@
         {% endif %}
     </div>
 </div>
+
+<script>
+    // Add click handler for group cards if needed
+    document.addEventListener('DOMContentLoaded', function() {
+        const groupCards = document.querySelectorAll('.group-card');
+        groupCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Get the parent <a> tag and navigate to its href
+                this.parentElement.click();
+            });
+        });
+    });
+</script>
 {% endblock %}

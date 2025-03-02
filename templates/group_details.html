@@ -98,28 +98,28 @@
             <div class="expenses-container">
                 {% for expense in expenses %}
                     <div class="expense-item">
-                        <div class="d-flex justify-content-between">
-                            <h5>{{ expense.description }}</h5>
-                            <span class="h5">₹{{ "%.2f"|format(expense.amount) }}</span>
-                        </div>
-                        <p class="mb-1 text-muted">
-                            Paid by <strong>{{ expense.payer.username }}</strong>
-                            on {{ expense.timestamp.strftime('%b %d, %Y') }}
-                        </p>
+    <div class="d-flex justify-content-between">
+        <h5>{{ expense.description }}</h5>
+        <span class="h5">₹{{ "%.2f"|format(expense.amount) }}</span>
+    </div>
+    <p class="mb-1 text-muted">
+        Paid by <strong>{{ expense.payer.username }}</strong>
+        on {{ expense.date.strftime('%b %d, %Y') }}
+    </p>
 
-                        {% if expense.expense_splits %}
-                            <hr class="my-2">
-                            <div class="splits">
-                                <p class="mb-1"><small>Split between:</small></p>
-                                {% for split in expense.expense_splits %}
-                                    <div class="d-flex justify-content-between">
-                                        <small>{{ split.user.username }}</small>
-                                        <small>₹{{ "%.2f"|format(split.amount) }}</small>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
+    {% if expense.expense_splits %}
+        <hr class="my-2">
+        <div class="splits">
+            <p class="mb-1"><small>Split between:</small></p>
+            {% for split in expense.expense_splits %}
+                <div class="d-flex justify-content-between">
+                    <small>{{ split.user.username }}</small>
+                    <small>₹{{ "%.2f"|format(split.amount) }}</small>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
                 {% endfor %}
             </div>
         {% else %}
