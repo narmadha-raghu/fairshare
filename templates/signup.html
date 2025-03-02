@@ -1,9 +1,43 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    body {
+        background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+        background-size: cover;
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.1); /* Reduced opacity from 0.2 to 0.1 */
+        padding: 20px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px); /* Reduced blur for more transparency */
+        -webkit-backdrop-filter: blur(5px); /* For Safari support */
+        max-width: 500px;
+        width: 90%;
+        margin: auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2); /* More subtle border */
+    }
+    .form-label {
+        font-weight: 600; /* Made bolder for better readability */
+        color: #222; /* Darker text for contrast */
+    }
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.4); /* Reduced from 0.6 */
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .form-control:focus {
+        background-color: rgba(255, 255, 255, 0.6); /* Reduced from 0.8 */
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.15);
+    }
+    /* Make text more readable against transparent background */
+    h2, p {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+</style>
 <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card shadow-lg p-4 border-0" style="max-width: 400px; width: 100%;">
-        <h2 class="text-center">Sign Up</h2>
+    <div class="glass-card">
+        <h2 class="text-center mb-4">Sign Up</h2>
 
         <form method="POST">
             <div class="mb-3">
@@ -26,7 +60,7 @@
         </form>
 
         <div class="text-center mt-3">
-            <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+            <p>Already have an account? <a href="{{ url_for('login') }}" class="fw-bold text-dark">Login</a></p>
         </div>
     </div>
 </div>

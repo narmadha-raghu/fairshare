@@ -1,8 +1,52 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    body {
+        background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+        background-size: cover;
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.1); /* Reduced opacity for more transparency */
+        padding: 20px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px); /* Reduced blur for more transparency */
+        -webkit-backdrop-filter: blur(5px); /* For Safari support */
+        max-width: 500px; /* Increased from 400px to 500px */
+        width: 90%; /* Added to ensure responsiveness */
+        margin: auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+    }
+    .form-label {
+        font-weight: 600; /* Made bolder for better readability */
+        color: #222; /* Darker text for contrast */
+    }
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.4); /* More transparent inputs */
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .form-control:focus {
+        background-color: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.15);
+    }
+    /* Make text more readable against transparent background */
+    h2, p {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    /* Lighter blue login button */
+    .btn-lighter-blue {
+        background-color: #5c9dde; /* Lighter shade of blue */
+        border-color: #5c9dde;
+        color: white;
+    }
+    .btn-lighter-blue:hover {
+        background-color: #4a8cd6;
+        border-color: #4a8cd6;
+    }
+</style>
 <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card shadow-lg p-4 border-0" style="max-width: 400px; width: 100%;">
+    <div class="glass-card">
         <h2 class="text-center mb-4">Login</h2>
 
         <form method="POST">
@@ -14,11 +58,11 @@
                 <label class="form-label">Password</label>
                 <input type="password" name="password" class="form-control" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
+            <button type="submit" class="btn btn-lighter-blue w-100">Login</button>
         </form>
 
         <div class="text-center mt-3">
-            <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a></p>
+            <p>Don't have an account? <a href="{{ url_for('signup') }}" class="fw-bold text-dark">Sign Up</a></p>
         </div>
     </div>
 </div>
