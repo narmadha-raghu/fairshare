@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    body {
+        background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+        background-size: cover;
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        max-width: 800px;
+        width: 100%;
+        margin: auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 20px;
+    }
+    .group-card {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: transform 0.2s;
+    }
+    .group-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .btn-create-group {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .btn-create-group:hover {
+        background-color: #218838;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 30px;
+    }
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Groups</h2>
+        <a href="{{ url_for('create_group') }}" class="btn btn-create-group">
+            <i class="bi bi-plus-circle"></i> Create New Group
+        </a>
+    </div>
+
+    <div class="glass-card">
+        {% if groups %}
+            <div class="row">
+                {% for group in groups %}
+                    <div class="col-md-6 mb-3">
+                        <div class="group-card">
+                            <h4><a href="{{ url_for('group_details', group_id=group.id) }}" class="text-decoration-none">{{ group.name }}</a></h4>
+                            <p class="text-muted">{{ group.description }}</p>
+                            
+                            {% if group.created_by == current_user.id %}
+                                <span class="badge bg-success">Creator</span>
+                            {% else %}
+                                <span class="badge bg-primary">Member</span>
+                            {% endif %}
+                            
+                            <p class="text-muted mt-2 mb-0">
+                                <small>Created on {{ group.created_at.strftime('%B %d, %Y') }}</small>
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-people"></i>
+                <h4>No Groups Yet</h4>
+                <p>You haven't joined or created any groups yet. Create your first group to get started!</p>
+                <a href="{{ url_for('create_group') }}" class="btn btn-create-group">
+                    Create Your First Group
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

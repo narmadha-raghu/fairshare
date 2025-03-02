@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    body {
+        background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+        background-size: cover;
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        max-width: 800px;
+        width: 100%;
+        margin: auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 20px;
+    }
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .expense-item, .balance-item {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .member-pill {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 20px;
+        padding: 5px 12px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+    }
+</style>
+
+<div class="container py-4">
+    <!-- Group Header -->
+    <div class="glass-card">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h2>{{ group.name }}</h2>
+                <p class="text-muted">{{ group.description }}</p>
+            </div>
+            <div>
+                <a href="{{ url_for('add_group_expense', group_id=group.id) }}" class="btn btn-success me-2">
+                    <i class="bi bi-plus-circle"></i> Add Expense
+                </a>
+                <a href="{{ url_for('group_settle', group_id=group.id) }}" class="btn btn-primary">
+                    <i class="bi bi-cash"></i> Settle Up
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Members Section -->
+    <div class="glass-card">
+        <div class="section-header">
+            <h4>Members</h4>
+            {% if group.created_by == current_user.id %}
+                <a href="{{ url_for('add_group_member', group_id=group.id) }}" class="btn btn-sm btn-outline-success">
+                    <i class="bi bi-person-plus"></i> Add Member
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="members-container">
+            {% for member in members %}
+                <span class="member-pill">
+                    {{ member.username }}
+                    {% if member.id == group.created_by %}
+                        <i class="bi bi-star-fill text-warning ms-1" title="Group Creator"></i>
+                    {% endif %}
+                </span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Expenses Section -->
+    <div class="glass-card">
+        <h4>Expenses</h4>
+
+        {% if expenses %}
+            <div class="expenses-container">
+                {% for expense in expenses %}
+                    <div class="expense-item">
+                        <div class="d-flex justify-content-between">
+                            <h5>{{ expense.description }}</h5>
+                            <span class="h5">₹{{ "%.2f"|format(expense.amount) }}</span>
+                        </div>
+                        <p class="mb-1 text-muted">
+                            Paid by <strong>{{ expense.payer.username }}</strong>
+                            on {{ expense.timestamp.strftime('%b %d, %Y') }}
+                        </p>
+
+                        {% if expense.expense_splits %}
+                            <hr class="my-2">
+                            <div class="splits">
+                                <p class="mb-1"><small>Split between:</small></p>
+                                {% for split in expense.expense_splits %}
+                                    <div class="d-flex justify-content-between">
+                                        <small>{{ split.user.username }}</small>
+                                        <small>₹{{ "%.2f"|format(split.amount) }}</small>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>No expenses added yet. Click "Add Expense" to get started!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Balances Section -->
+    <div class="glass-card">
+        <h4>Balances</h4>
+
+        {% if balances %}
+            <div class="balances-container">
+                {% for (debtor, creditor), amount in balances.items() %}
+                    <div class="balance-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ debtor }}</strong> owes <strong>{{ creditor }}</strong>
+                            </div>
+                            <div class="text-danger">₹{{ "%.2f"|format(amount) }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>All settled up! There are no outstanding balances.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

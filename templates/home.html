@@ -3,32 +3,37 @@
 {% block content %}
 <div class="container text-center mt-5">
     <h1 class="display-3 fw-bold text-success" style="font-weight: 600;">Welcome to FairShare!</h1>
-    <p class="lead text-secondary" style="font-weight: 400;">Less stress when sharing expenses with anyone.</p>
+    <p class="lead text-secondary" style="font-weight: 400;">The simplest way to share expenses with friends, family, and roommates.</p>
 
     {% if not current_user.is_authenticated %}
     <div class="mt-4">
         <a href="{{ url_for('login') }}" class="btn btn-lg btn-outline-primary mx-2">Login</a>
         <a href="{{ url_for('signup') }}" class="btn btn-lg btn-success mx-2">Sign Up</a>
     </div>
+    {% else %}
+    <div class="mt-4">
+        <a href="{{ url_for('groups') }}" class="btn btn-lg btn-success mx-2">View My Groups</a>
+        <a href="{{ url_for('create_group') }}" class="btn btn-lg btn-outline-primary mx-2">Create New Group</a>
+    </div>
     {% endif %}
 
     <div class="row mt-5">
         <div class="col-md-4">
             <div class="card shadow-sm p-3 border-0">
-                <h4 class="text-primary">Smart Expense Tracking</h4>
-                <p class="text-muted">Seamlessly keep tabs on who paid what, effortlessly.</p>
+                <h4 class="text-primary">Group Expense Tracking</h4>
+                <p class="text-muted">Create groups for trips, roommates, or events and easily track shared expenses.</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card shadow-sm p-3 border-0">
-                <h4 class="text-success">Instant Settlements</h4>
-                <p class="text-muted">Say goodbye to awkward money talks. Settle in a tap!</p>
+                <h4 class="text-success">Smart Settlement</h4>
+                <p class="text-muted">See who owes what to whom within your groups and settle debts with a single click.</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card shadow-sm p-3 border-0">
                 <h4 class="text-warning">Peace of Mind</h4>
-                <p class="text-muted">No more guesswork—know exactly who owes what.</p>
+                <p class="text-muted">No more spreadsheets or confusion—FairShare keeps everything organized and clear.</p>
             </div>
         </div>
     </div>

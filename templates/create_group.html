@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    body {
+        background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+        background-size: cover;
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        max-width: 500px;
+        width: 90%;
+        margin: auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .form-label {
+        font-weight: 600;
+        color: #222;
+    }
+    .form-control {
+        background-color: rgba(255, 255, 255, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .form-control:focus {
+        background-color: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.15);
+    }
+    h2 {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+</style>
+
+<div class="container py-4">
+    <h2 class="text-center mb-4">Create New Group</h2>
+
+    <div class="glass-card">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Group Name</label>
+                <input type="text" name="name" class="form-control" required>
+                <div class="form-text">Give your group a memorable name.</div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+                <div class="form-text">Optional: Describe the purpose of this group.</div>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-success">Create Group</button>
+                <a href="{{ url_for('groups') }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

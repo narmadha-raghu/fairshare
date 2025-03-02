@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    body {
+        background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+        background-size: cover;
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        max-width: 500px;
+        width: 90%;
+        margin: auto;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 20px;
+    }
+    .form-label {
+        font-weight: 600;
+        color: #222;
+    }
+    .form-control, .form-select {
+        background-color: rgba(255, 255, 255, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .form-control:focus, .form-select:focus {
+        background-color: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.15);
+    }
+    h2, h4 {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    .balance-item {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+</style>
+
+<div class="container py-4">
+    <h2 class="text-center mb-4">Settle Up in {{ group.name }}</h2>
+
+    <!-- Current Balances -->
+    <div class="glass-card">
+        <h4>Current Balances</h4>
+
+        {% if balances %}
+            <div class="balances-container">
+                {% for (debtor, creditor), amount in balances.items() %}
+                    <div class="balance-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ debtor }}</strong> owes <strong>{{ creditor }}</strong>
+                            </div>
+                            <div class="text-danger">₹{{ "%.2f"|format(amount) }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-success">
+                All settled up! There are no outstanding balances in this group.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Settlement Form -->
+    <div class="glass-card">
+        <h4>Record a Payment</h4>
+
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Payer (Who is paying)</label>
+                <select name="payer_id" id="payer_id" class="form-select" required>
+                    {% for member in members %}
+                        <option value="{{ member.id }}" {% if member.id == current_user.id %}selected{% endif %}>
+                            {{ member.username }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Receiver (Who is getting paid)</label>
+                <select name="receiver_id" id="receiver_id" class="form-select" required>
+                    {% for member in members %}
+                        {% if member.id != current_user.id %}
+                            <option value="{{ member.id }}">{{ member.username }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Amount</label>
+                <input type="number" step="0.01" name="amount" class="form-control" required>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Record Payment</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Settle All -->
+    <div class="glass-card">
+        <h4>Settle All My Debts</h4>
+        <p>This will mark all your debts in this group as paid.</p>
+
+        <form method="POST" action="{{ url_for('group_settle_all', group_id=group.id) }}">
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success">Settle All My Debts</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="text-center mt-3">
+        <a href="{{ url_for('group_details', group_id=group.id) }}" class="btn btn-outline-secondary">
+            Back to Group
+        </a>
+    </div>
+</div>
+
+<script>
+    // Prevent selecting the same user as both payer and receiver
+    document.getElementById("payer_id").addEventListener("change", function() {
+        let payerId = this.value;
+        let receiverSelect = document.getElementById("receiver_id");
+
+        // Re-enable all options
+        for (let i = 0; i < receiverSelect.options.length; i++) {
+            receiverSelect.options[i].disabled = false;
+        }
+
+        // Disable the option that matches the payer
+        for (let i = 0; i < receiverSelect.options.length; i++) {
+            if (receiverSelect.options[i].value === payerId) {
+                receiverSelect.options[i].disabled = true;
+
+                // If the currently selected receiver is now disabled, select the first enabled option
+                if (receiverSelect.value === payerId) {
+                    for (let j = 0; j < receiverSelect.options.length; j++) {
+                        if (!receiverSelect.options[j].disabled) {
+                            receiverSelect.value = receiverSelect.options[j].value;
+                            break;
+                        }
+                    }
+                }
+
+                break;
+            }
+        }
+    });
+
+    // Trigger the change event initially to set up the disabled options
+    document.getElementById("payer_id").dispatchEvent(new Event("change"));
+</script>
+{% endblock %}
