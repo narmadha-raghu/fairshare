@@ -20,7 +20,6 @@ login_manager.login_view = 'login'
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
 
 
@@ -84,10 +83,8 @@ def home():
 def signup():
     if request.method == 'POST':
         username = request.form['username']
-        email = request.form['email']
         password = bcrypt.generate_password_hash(request.form['password'])
-
-        user = User(username=username, email=email, password=password)
+        user = User(username=username, password=password)
         db.session.add(user)
         db.session.commit()
 
@@ -190,59 +187,63 @@ def dashboard():
                            payer_id=current_user.id)
 
 
-@app.route('/settle', methods=['POST'])
+@app.route('/settle', methods=['POST', 'GET'])
 @login_required
 def settle():
-    payer_id = int(request.form.get('payer_id'))
-    receiver_id = int(request.form.get('receiver_id'))
-    amount = float(request.form.get('amount'))
+    if request.method == 'POST':
+            payer_id = int(request.form.get('payer_id'))
+            receiver_id = int(request.form.get('receiver_id'))
+            amount = float(request.form.get('amount'))
 
-    if not payer_id or not receiver_id or not amount:
-        flash("Invalid settlement request.", "danger")
-        return redirect(url_for('dashboard'))
+            if not payer_id or not receiver_id or not amount:
+                flash("Invalid settlement request.", "danger")
+                return redirect(url_for('dashboard'))
 
-    if payer_id == receiver_id:
-        flash("Payer and Receiver cannot be the same.", "danger")
-        return redirect(url_for('dashboard'))
+            if payer_id == receiver_id:
+                flash("Payer and Receiver cannot be the same.", "danger")
+                return redirect(url_for('dashboard'))
 
-    payer = User.query.get(payer_id)
-    receiver = User.query.get(receiver_id)
+            payer = User.query.get(payer_id)
+            receiver = User.query.get(receiver_id)
 
-    if not payer or not receiver:
-        flash("Invalid users selected.", "danger")
-        return redirect(url_for('dashboard'))
+            if not payer or not receiver:
+                flash("Invalid users selected.", "danger")
+                return redirect(url_for('dashboard'))
 
-    # ✅ Fetch unsettled splits where receiver owes payer
-    splits = ExpenseSplit.query.filter(
-        ExpenseSplit.user_id == receiver_id,
-        ExpenseSplit.expense.has(payer_id=payer_id),
-        ExpenseSplit.amount > 0  # Only consider non-zero amounts
-    ).order_by(ExpenseSplit.amount.asc()).all()
+            # ✅ Fetch unsettled splits where receiver owes payer
+            splits = ExpenseSplit.query.filter(
+                ExpenseSplit.user_id == receiver_id,
+                ExpenseSplit.expense.has(payer_id=payer_id),
+                ExpenseSplit.amount > 0  # Only consider non-zero amounts
+            ).order_by(ExpenseSplit.amount.asc()).all()
 
-    if not splits:
-        flash("No outstanding balance found between selected users.", "danger")
-        return redirect(url_for('dashboard'))
+            if not splits:
+                flash("No outstanding balance found between selected users.", "danger")
+                return redirect(url_for('dashboard'))
 
-    remaining_amount = amount  # Amount being settled
+            remaining_amount = amount  # Amount being settled
 
-    for split in splits:
-        if remaining_amount >= split.amount:
-            remaining_amount -= split.amount
-            split.amount = 0  # Fully settle this split
-        else:
-            split.amount -= remaining_amount  # Reduce the split amount
-            db.session.add(split)  # ✅ Ensure the updated split is tracked
-            break
+            for split in splits:
+                if remaining_amount >= split.amount:
+                    remaining_amount -= split.amount
+                    split.amount = 0  # Fully settle this split
+                else:
+                    split.amount -= remaining_amount  # Reduce the split amount
+                    db.session.add(split)  # ✅ Ensure the updated split is tracked
+                    break
 
-        db.session.add(split)  # ✅ Track all updates
+                db.session.add(split)  # ✅ Track all updates
 
-    # ✅ Delete fully settled splits after updates
-    db.session.commit()
-    ExpenseSplit.query.filter(ExpenseSplit.amount == 0).delete()
-    db.session.commit()
+            # ✅ Delete fully settled splits after updates
+            db.session.commit()
+            ExpenseSplit.query.filter(ExpenseSplit.amount == 0).delete()
+            db.session.commit()
 
-    flash(f"{payer.username} successfully settled ₹{amount} with {receiver.username}!", "success")
-    return redirect(url_for('dashboard'))
+            flash(f"{payer.username} successfully settled ₹{amount} with {receiver.username}!", "success")
+            return redirect(url_for('dashboard'))
+    else:
+        users = User.query.all()
+        return render_template('settle.html', users=users)
 
 
 @app.route('/settle_all', methods=['POST'])

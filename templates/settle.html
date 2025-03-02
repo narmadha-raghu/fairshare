@@ -12,8 +12,8 @@
         border-radius: 10px;
         backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
-        max-width: 800px;
-        width: 100%;
+        max-width: 500px;
+        width: 90%;
         margin: auto;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         border: 1px solid rgba(255, 255, 255, 0.2);
@@ -51,41 +51,45 @@
 </style>
 
 <div class="container py-4">
-    <h2 class="text-center mb-4">Dashboard</h2>
+    <h2 class="text-center mb-4">Settle Payments</h2>
 
-    <!-- Expense List -->
+    <!-- Settle Payments -->
     <div class="glass-card">
-        <h4>Expenses</h4>
-        <ul class="list-group">
-            {% for expense in expenses %}
-                <li class="list-group-item">
-                    <strong>{{ expense.description }}</strong> - ₹{{ expense.amount }}
-                    <span class="text-muted"> (Paid by {{ expense.payer.username }})</span>
+        <h4>Settle Payments</h4>
+        <form method="POST" action="{{ url_for('settle') }}">
+            <div class="mb-3">
+                <label class="form-label">Payer:</label>
+                <select name="payer_id" class="form-select" required>
+                    {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-                    {% if expense.split_message %}
-                        <p class="text-danger mt-2">{{ expense.split_message }}</p>
-                    {% else %}
-                        {% if expense.expense_splits|length > 0 %}
-                            <p class="text-success mt-2">Amount Per Person: ₹{{ "%.2f"|format(expense.amount / expense.expense_splits|length) }}</p>
-                        {% else %}
-                            <p class="text-warning mt-2">Settled / No Splits</p>
+            <div class="mb-3">
+                <label class="form-label">Receiver:</label>
+                <select name="receiver_id" class="form-select" required>
+                    {% for user in users %}
+                        {% if user.id != payer_id %}
+                            <option value="{{ user.id }}">{{ user.username }}</option>
                         {% endif %}
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Amount:</label>
+                <input type="number" step="0.01" name="amount" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-lighter-blue">Settle</button>
+        </form>
     </div>
 
-    <!-- Who Owes Whom -->
     <div class="glass-card">
-        <h4>Who Owes Whom</h4>
-        <ul class="list-group">
-            {% for (payer, receiver), amount in balances.items() %}
-                <li class="list-group-item">
-                    <strong>{{ payer }}</strong> owes <strong>{{ receiver }}</strong> ₹{{ "%.2f"|format(amount) }}
-                </li>
-            {% endfor %}
-        </ul>
+        <h4>Settle All</h4>
+        <form method="POST" action="{{ url_for('settle_all') }}">
+            <button type="submit" class="btn btn-success w-100">Settle All</button>
+        </form>
     </div>
 </div>
 {% endblock %}
