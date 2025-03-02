@@ -77,7 +77,7 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
-    return "Welcome to FairShare!"
+    return render_template('home.html')
 
 
 @app.route('/signup', methods=['GET', 'POST'])

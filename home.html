@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="display-3 fw-bold text-success">Welcome to FairShare!</h1>
+    <p class="lead text-secondary">Less stress when sharing expenses with anyone.</p>
+
+    <div class="mt-4">
+        <a href="{{ url_for('login') }}" class="btn btn-lg btn-outline-primary mx-2">Login</a>
+        <a href="{{ url_for('signup') }}" class="btn btn-lg btn-success mx-2">Sign Up</a>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 border-0">
+                <h4 class="text-primary">Smart Expense Tracking</h4>
+                <p class="text-muted">Seamlessly keep tabs on who paid what, effortlessly.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 border-0">
+                <h4 class="text-success">Instant Settlements</h4>
+                <p class="text-muted">Say goodbye to awkward money talks. Settle in a tap!</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 border-0">
+                <h4 class="text-warning">Peace of Mind</h4>
+                <p class="text-muted">No more guesswork—know exactly who owes what.</p>
+            </div>
+        </div>
+    </div>
+
+    <img src="{{ url_for('static', filename='alexander-grey-8lnbXtxFGZw-unsplash.jpg') }}"
+         alt="Friends sharing expenses"
+         class="img-fluid mt-4 rounded shadow w-100"
+         style="max-height: 400px; object-fit: cover;">
+</div>
+{% endblock %}
