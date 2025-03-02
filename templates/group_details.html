@@ -104,7 +104,11 @@
     </div>
     <p class="mb-1 text-muted">
         Paid by <strong>{{ expense.payer.username }}</strong>
+        {% if expense.date %}
         on {{ expense.date.strftime('%b %d, %Y') }}
+        {% else %}
+        on {{ expense.created_at.strftime('%b %d, %Y') }}
+        {% endif %}
     </p>
 
     {% if expense.expense_splits %}

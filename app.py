@@ -64,7 +64,7 @@ class Expense(db.Model):
 
     payer = db.relationship('User', backref='expenses')
     group = db.relationship('Group', backref='expenses')
-
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class ExpenseSplit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
