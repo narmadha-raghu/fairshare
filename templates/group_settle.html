@@ -90,9 +90,7 @@
                 <label class="form-label">Receiver (Who is getting paid)</label>
                 <select name="receiver_id" id="receiver_id" class="form-select" required>
                     {% for member in members %}
-                        {% if member.id != current_user.id %}
-                            <option value="{{ member.id }}">{{ member.username }}</option>
-                        {% endif %}
+                        <option value="{{ member.id }}">{{ member.username }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -128,7 +126,6 @@
 </div>
 
 <script>
-    // Prevent selecting the same user as both payer and receiver
     document.getElementById("payer_id").addEventListener("change", function() {
         let payerId = this.value;
         let receiverSelect = document.getElementById("receiver_id");
@@ -152,7 +149,6 @@
                         }
                     }
                 }
-
                 break;
             }
         }
@@ -160,5 +156,6 @@
 
     // Trigger the change event initially to set up the disabled options
     document.getElementById("payer_id").dispatchEvent(new Event("change"));
+
 </script>
 {% endblock %}
